@@ -5,7 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <!-- MANDATORY: Declare support for both light and dark themes per modern-web-guidance -->
   <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#090a0f">
   <title>Retouch AI - Watermark & Object Remover</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon.svg">
+  <link rel="manifest" href="manifest.json">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -364,6 +368,15 @@
   <script src="js/samples.js"></script>
   <script src="js/canvas-manager.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    if ('serviceWorker' in navigator && window.location.protocol.startsWith('http')) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(err => {
+          console.debug('ServiceWorker registration omitted:', err);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
 
