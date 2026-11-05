@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- MANDATORY: Declare support for both light and dark themes per modern-web-guidance -->
+  <meta name="color-scheme" content="light dark">
+  <title>Retouch AI - Watermark & Object Remover</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top App Navigation Bar -->
+  <header class="app-header">
+    <div class="brand-area">
+      <div class="brand-logo-icon" aria-hidden="true">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
+        </svg>
+      </div>
+      <div>
+        <span class="brand-title">Retouch<span style="color: var(--brand-accent);">.ai</span></span>
+        <span class="brand-badge">PRO CLEANUP</span>
+      </div>
+    </div>
+
+    <!-- Center metadata in editor mode -->
+    <div class="header-center-info">
+      <span id="imageMetaBadge" class="meta-pill" style="display: none;">Ready</span>
+    </div>
+
+    <!-- Header Actions -->
+    <div class="header-actions">
+      <button id="shortcutsBtn" class="btn btn-ghost btn-icon" title="Keyboard Shortcuts (?)" aria-label="Keyboard Shortcuts">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      </button>
+
+      <button id="settingsBtn" class="btn btn-ghost btn-icon" title="AI Settings" aria-label="AI Model Settings">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      </button>
+
+      <button id="newImageBtn" class="btn btn-ghost" style="display: none;">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+        New Image
+      </button>
+
+      <!-- Download Button with Dropdown -->
+      <div style="position: relative;">
+        <button id="downloadBtn" class="btn btn-primary" style="display: none;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Download HD
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+
+        <div id="downloadDropdown" class="dropdown-menu">
+          <button class="dropdown-item" data-export-format="png">
+            <span>PNG Image</span>
+            <span class="dropdown-item-meta">Lossless HD</span>
+          </button>
+          <button class="dropdown-item" data-export-format="jpeg">
+            <span>JPG Image</span>
+            <span class="dropdown-item-meta">Compact</span>
+          </button>
+          <button class="dropdown-item" data-export-format="webp">
+            <span>WebP Image</span>
+            <span class="dropdown-item-meta">Modern Web</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <!-- ======================================================================
+         1. Upload Hero View (Pixelcut aesthetic)
+         ====================================================================== -->
+    <section id="uploadView" class="upload-view-container">
+      <div class="hero-header">
+        <div class="hero-pill">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          Instant 100% Client-Side AI Cleanup
+        </div>
+        <h1 class="hero-title">
+          Remove Watermarks & Objects<br>
+          <span class="hero-title-gradient">with AI Precision in Seconds</span>
+        </h1>
+        <p class="hero-subtitle">
+          Erase watermarks, date stamps, unwanted people, text logos, and photobombers with seamless texture blending. Private, fast, and free.
+        </p>
+      </div>
+
+      <!-- Drag & Drop Hero Card -->
+      <div id="dropZone" class="drop-zone" tabindex="0" role="button" aria-label="Upload image dropzone">
+        <input type="file" id="fileInput" accept="image/png, image/jpeg, image/webp, image/avif" style="display: none;">
+        
+        <div class="drop-zone-icon-wrap">
+          <svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <circle cx="8.5" cy="8.5" r="1.5"/>
+            <polyline points="21 15 16 10 5 21"/>
+          </svg>
+        </div>
+
+        <h3 class="drop-zone-title">Drop your image here, or browse</h3>
+        <p class="drop-zone-text">Supports PNG, JPG, WebP • Or press <kbd class="drop-zone-kbd">Ctrl+V</kbd> / <kbd class="drop-zone-kbd">⌘V</kbd> to paste</p>
+
+        <button id="browseBtn" class="btn btn-cta" type="button">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          Select an Image
+        </button>
+
+        <div class="drop-zone-formats">
+          <span class="format-tag">🔒 100% Private (Runs locally in browser)</span>
+          <span>•</span>
+          <span class="format-tag">⚡ Full Resolution Retouch</span>
+        </div>
+      </div>
+
+      <!-- Built-in Samples Section -->
+      <div class="samples-section">
+        <div class="samples-header">
+          <div>
+            <h3 class="samples-title">Try with demo examples</h3>
+            <p class="samples-hint">Click any photo to test instant watermark & object removal</p>
+          </div>
+        </div>
+        <div id="samplesGrid" class="samples-grid">
+          <!-- Populated by SampleGenerator -->
+        </div>
+      </div>
+    </section>
+
+    <!-- ======================================================================
+         2. Studio Editor View (Canvas + Floating Docks)
+         ====================================================================== -->
+    <section id="editorView" class="editor-view-container" style="display: none;">
+      <!-- Canvas Stage -->
+      <div id="canvasContainer" class="canvas-container">
+        <!-- Interactive layers managed by CanvasManager -->
+      </div>
+
+      <!-- Floating Top Tool Dock (Pixelcut style) -->
+      <div class="floating-tool-dock">
+        <!-- Masking Tools -->
+        <div class="dock-group">
+          <button id="toolBrush" class="dock-btn active" data-tooltip="Brush Tool (B)" aria-label="Brush Tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.375 2.625a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.375-9.375z"/><path d="M9 16c-2 2-3 4-3 5 0 1.1.9 2 2 2s3-.9 5-3"/></svg>
+          </button>
+
+          <button id="toolEraser" class="dock-btn" data-tooltip="Eraser Tool (E)" aria-label="Eraser Tool">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m7 21-4.3-4.3c-1-1-1-2.5 0-3.4l9.6-9.6c1-1 2.5-1 3.4 0l5.6 5.6c1 1 1 2.5 0 3.4L13 21"/><path d="M22 21H7"/><path d="m5 11 9 9"/></svg>
+          </button>
+
+          <button id="toolBox" class="dock-btn" data-tooltip="Box Select (R)" aria-label="Box Select">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" stroke-dasharray="3 3"/></svg>
+          </button>
+
+          <button id="toolLasso" class="dock-btn" data-tooltip="Lasso Select (L)" aria-label="Lasso Select">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 22a5 5 0 0 1-2-4c0-3.8 4.2-7 9.5-7s9.5 3.2 9.5 7-4.2 7-9.5 7c-1.8 0-3.5-.4-5-1.1"/><path d="M3.3 14A10 10 0 0 1 12 3c5.5 0 10 4.5 10 10"/></svg>
+          </button>
+
+          <button id="toolPan" class="dock-btn" data-tooltip="Pan Canvas (H / Space)" aria-label="Pan Canvas">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 11V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v0"/><path d="M14 10V4a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v2"/><path d="M10 10.5V6a2 2 0 0 0-2-2v0a2 2 0 0 0-2 2v8"/><path d="M18 8a2 2 0 1 1 4 0v6a8 8 0 0 1-8 8h-2c-2.8 0-4.5-.86-5.99-2.34l-3.6-3.6a2 2 0 0 1 2.83-2.82L7 15"/></svg>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- Brush Size Slider -->
+        <div class="brush-size-control">
+          <div id="brushSizePreview" class="brush-size-preview-circle" title="Brush Size Preview"></div>
+          <label for="brushSizeSlider" style="display: none;">Brush Size</label>
+          <input type="range" id="brushSizeSlider" class="brush-slider" min="4" max="140" value="32" title="Brush Size ([ / ])">
+          <span id="brushSizeValue" class="brush-size-label">32px</span>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- History Actions -->
+        <div class="dock-group">
+          <button id="undoBtn" class="dock-btn" data-tooltip="Undo Stroke (⌘Z)" aria-label="Undo Stroke" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 7v6h6"/><path d="M21 17a9 9 0 0 0-9-9 9 9 0 0 0-6 2.3L3 13"/></svg>
+          </button>
+
+          <button id="redoBtn" class="dock-btn" data-tooltip="Redo Stroke (⌘⇧Z)" aria-label="Redo Stroke" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 7v6h-6"/><path d="M3 17a9 9 0 0 1 9-9 9 9 0 0 1 6 2.3l3 2.7"/></svg>
+          </button>
+
+          <button id="clearMaskBtn" class="dock-btn" data-tooltip="Clear Mask" aria-label="Clear Mask" disabled>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          </button>
+        </div>
+
+        <div class="dock-divider"></div>
+
+        <!-- 1-Click Gemini Watermark Preset -->
+        <button id="autoGeminiBtn" class="dock-btn-special" data-tooltip="Auto Select Gemini Sparkle" aria-label="Auto Select Gemini Logo">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+          ✦ Gemini Watermark
+        </button>
+
+        <!-- Primary Action: Inpaint / Retouch -->
+        <button id="inpaintBtn" class="btn-retouch-cta" disabled>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/></svg>
+          Remove Watermark
+        </button>
+      </div>
+
+      <!-- Floating Bottom Dock (Comparison & View Controls) -->
+      <div class="floating-bottom-dock">
+        <button id="compareBtn" class="bottom-dock-btn" data-tooltip="Hold to View Original (Space)" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          Hold Original
+        </button>
+
+        <button id="splitSliderBtn" class="bottom-dock-btn" data-tooltip="Split Curtain Comparison (C)" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="3" x2="12" y2="21"/><polyline points="8 8 4 12 8 16"/><polyline points="16 8 20 12 16 16"/></svg>
+          Split View
+        </button>
+
+        <button id="undoRetouchBtn" class="bottom-dock-btn" data-tooltip="Revert to Prior Retouch" disabled>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><polyline points="3 3 3 8 8 8"/></svg>
+          Revert Step
+        </button>
+
+        <div class="dock-divider"></div>
+
+        <button id="zoomOutBtn" class="bottom-dock-btn" aria-label="Zoom Out">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+
+        <span id="zoomLevelText" class="zoom-indicator">100%</span>
+
+        <button id="zoomInBtn" class="bottom-dock-btn" aria-label="Zoom In">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+        </button>
+
+        <button id="fitScreenBtn" class="bottom-dock-btn" data-tooltip="Fit to Screen" aria-label="Fit to Screen">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- ======================================================================
+       Dialogs & Modals
+       ====================================================================== -->
+
+  <!-- Inpainting Progress Dialog -->
+  <dialog id="progressModal">
+    <div class="progress-spinner"></div>
+    <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 6px;">Retouching Image...</h3>
+    <p id="progressStatus" style="font-size: 0.85rem; color: var(--text-muted);">Analyzing texture and synthesizing replacement...</p>
+    
+    <div class="progress-bar-track">
+      <div id="progressBar" class="progress-bar-fill"></div>
+    </div>
+    
+    <div class="progress-stats">
+      <span>AI Inpaint Synthesis</span>
+      <span id="progressPercent">0%</span>
+    </div>
+
+    <div style="margin-top: 24px;">
+      <button id="cancelProcessBtn" class="btn btn-ghost" style="width: 100%;">Cancel Operation</button>
+    </div>
+  </dialog>
+
+  <!-- AI Settings Modal -->
+  <dialog id="settingsModal">
+    <div class="modal-header">
+      <h3 class="modal-title">AI Retouch Settings</h3>
+      <button id="closeSettingsBtn" class="modal-close-btn" aria-label="Close settings">✕</button>
+    </div>
+
+    <div class="radio-options-group">
+      <label class="radio-card">
+        <input type="radio" name="inpaintMode" value="gemini" checked>
+        <div class="radio-card-content">
+          <h5>✦ Gemini & AI Logo Specialist (Default)</h5>
+          <p>Navier-Stokes biharmonic stream continuation with auto-dilation. Eliminates blocky artifacts on sparkle logos, watermarks, fabric, and wood.</p>
+        </div>
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="inpaintMode" value="smooth">
+        <div class="radio-card-content">
+          <h5>Fast Marching / Telea Fill</h5>
+          <p>Directional gradient extrapolation for fine lines, uniform skies, and small scratches.</p>
+        </div>
+      </label>
+
+      <label class="radio-card">
+        <input type="radio" name="inpaintMode" value="texture">
+        <div class="radio-card-content">
+          <h5>Exemplar Texture Fill</h5>
+          <p>Patch synthesis with Poisson gradient smoothing for large missing background areas.</p>
+        </div>
+      </label>
+    </div>
+
+    <div style="text-align: right;">
+      <button class="btn btn-primary" onclick="document.getElementById('settingsModal').close()">Save & Close</button>
+    </div>
+  </dialog>
+
+  <!-- Keyboard Shortcuts Modal -->
+  <dialog id="shortcutsModal">
+    <div class="modal-header">
+      <h3 class="modal-title">Keyboard Shortcuts</h3>
+      <button id="closeShortcutsBtn" class="modal-close-btn" aria-label="Close shortcuts">✕</button>
+    </div>
+
+    <div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Brush Tool</span>
+        <div class="shortcut-keys"><span class="shortcut-key">B</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Eraser (Unmask)</span>
+        <div class="shortcut-keys"><span class="shortcut-key">E</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Box Selection</span>
+        <div class="shortcut-keys"><span class="shortcut-key">R</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Lasso Selection</span>
+        <div class="shortcut-keys"><span class="shortcut-key">L</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Pan Canvas</span>
+        <div class="shortcut-keys"><span class="shortcut-key">Space</span> + <span class="shortcut-key">Drag</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Adjust Brush Size</span>
+        <div class="shortcut-keys"><span class="shortcut-key">[</span> <span class="shortcut-key">]</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Undo Mask Stroke</span>
+        <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">Z</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Redo Mask Stroke</span>
+        <div class="shortcut-keys"><span class="shortcut-key">Ctrl</span> + <span class="shortcut-key">Y</span> / <span class="shortcut-key">Shift+Z</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Trigger Retouch</span>
+        <div class="shortcut-keys"><span class="shortcut-key">Enter</span></div>
+      </div>
+      <div class="shortcut-row">
+        <span class="shortcut-desc">Toggle Split View</span>
+        <div class="shortcut-keys"><span class="shortcut-key">C</span></div>
+      </div>
+    </div>
+  </dialog>
+
+  <!-- Toast Notification Container -->
+  <div id="toastContainer" class="toast-container" aria-live="polite"></div>
+
+  <!-- Scripts -->
+  <script src="js/user_sample.js"></script>
+  <script src="js/inpainter.js"></script>
+  <script src="js/samples.js"></script>
+  <script src="js/canvas-manager.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
+
